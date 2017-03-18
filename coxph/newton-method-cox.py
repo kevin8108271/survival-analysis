@@ -64,7 +64,7 @@ def coxph(x_t,x_z,x_c,iteration_max):
     return(bu)
 
 
-# In[126]:
+# result of R
 
 coef exp(coef)  se(coef)     z       p
 x[, 1]  -3.04e-02  9.70e-01  1.31e-02 -2.31 0.02062
@@ -77,17 +77,6 @@ x[, 9]   2.60e-06  1.00e+00  2.68e-04  0.01 0.99224
 x[, 10] -1.67e-02  9.83e-01  7.91e-03 -2.11 0.03465
 
 
-# In[153]:
-
-np.sum((np.abs(bu-bc)>(10**(-8)))*1)
-
-
-# In[132]:
-
-x_or[:,1:3]
-
-
-# In[ ]:
 
 
 
