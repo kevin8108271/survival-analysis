@@ -4,11 +4,11 @@ from numpy.linalg import inv
 
 def coxph(x_t, x_z, x_c, iteration_max):
 
-    bu = np.zeros(8).reshape(-1, 1) + 0.001
-    bc = np.zeros(8).reshape(-1, 1) + 0.001
-    dls = np.zeros(8).reshape(8, 1)
-    ddls = np.zeros(64).reshape(8, 8)
-
+    bu = np.zeros(8).reshape(-1, 1) + 0.001 ##update coefficients
+    bc = np.zeros(8).reshape(-1, 1) + 0.001 ##current coefficients
+    dls = np.zeros(8).reshape(8, 1)         ##score function, the first order of log-likelihood
+    ddls = np.zeros(64).reshape(8, 8)       ##information matrix,the second order of log-likelihood
+    e = 10**(-8)                 ##the acception of converage
     for j in range(iteration_max):
         bc = bu
         dls = np.zeros(8).reshape(-1,1)
@@ -32,12 +32,12 @@ def coxph(x_t, x_z, x_c, iteration_max):
             temp = np.exp(np.dot(x_z[i:,:], bc)).reshape(-1, 1)
             tempx = x_z[i:,].reshape(-1, 8)
             tx = np.transpose(tempx)
-
-            ddls = ddls + np.dot(np.dot(tx,di),tempx) / sum(temp) - np.dot(np.dot(tx,temp),np.transpose(np.dot(tx,temp)))/sum(temp)/sum(temp)
-
+            sub = np.dot(np.dot(tx,temp),np.transpose(np.dot(tx,temp)))/np.sum(temp)/np.sum(temp)
+            ddls = ddls + np.dot(np.dot(tx,di),tempx) / sum(temp) - sub
+            
         bu = bc + np.dot(inv(ddls), dls)
 
-        if np.sum((np.abs(bu-bc) > (10**(-8)))*1) == 0:
+        if np.sum((np.abs(bu-bc) > e)*1) == 0:
             print('iteration time=', j)
             break
         elif j == iteration_max - 1:
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     x_c = x_or[:,2]
     x_z = np.hstack((x_or[:,0].reshape(-1,1), x_or[:,3:]))       # cov
     iteration_max = 100
-
+    
     '''
     # result from R
 
